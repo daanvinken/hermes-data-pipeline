@@ -1,6 +1,0 @@
-[0m[[0m[0mdebug[0m] [0m[0mAcquiring lock on file /Users/daanvi/workspace/hermes-data-pipeline/project/target/.sbt-compilation-infos/root-compile/.sbt-idea-lock ...[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/daanvi/workspace/hermes-data-pipeline/src/main/scala/org/hermes/pipeline/DataPipeline.scala:27:47: type SQLContext is not a member of package org.apache.spark.sql[0m
-[0m[[0m[31merror[0m] [0m[0m    val sqlContext = new org.apache.spark.sql.SQLContext(sc)[0m
-[0m[[0m[31merror[0m] [0m[0m                                              ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
-[0m[[0m[0mdebug[0m] [0m[0mReleasing lock on file /Users/daanvi/workspace/hermes-data-pipeline/project/target/.sbt-compilation-infos/root-compile/.sbt-idea-lock.[0m
