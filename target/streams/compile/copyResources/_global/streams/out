@@ -1,3 +1,0 @@
-[0m[[0m[0mdebug[0m] [0m[0mCopy resource mappings: [0m
-[0m[[0m[0mdebug[0m] [0m[0m	(/vagrant/src/main/resources/workflowDefiniton.json,/vagrant/target/scala-2.12/classes/workflowDefiniton.json)[0m
-[0m[[0m[0mdebug[0m] [0m[0m	(/vagrant/src/main/resources/log4j.properties,/vagrant/target/scala-2.12/classes/log4j.properties)[0m
