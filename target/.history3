@@ -1,0 +1,8 @@
+1655984121997:;set _root_.scala.collection.Seq(historyPath := None,shellPrompt := { _ => "" },SettingKey[_root_.scala.Option[_root_.sbt.File]]("sbtStructureOutputFile") in _root_.sbt.Global := _root_.scala.Some(_root_.sbt.file("/private/var/folders/yq/fry8qvkd6dv1d1821byj5nmm0000gp/T/sbt-structure1.xml")),SettingKey[_root_.java.lang.String]("sbtStructureOptions") in _root_.sbt.Global := "download, resolveClassifiers, resolveSbtClassifiers");apply -cp "/Users/daanvi/Library/Application Support/JetBrains/IntelliJIdea2022.1/plugins/Scala/repo/org/jetbrains/scala/sbt-structure-extractor_2.12_1.0/2021.3.0/sbt-structure-extractor-2021.3.0.jar" org.jetbrains.sbt.CreateTasks;preferScala2;*/*:dumpStructure
+1655991369464:~run
+1655991527993:~run /vagrant/src/main/resources/workflowDefiniton.json
+1655991899350:~run
+1655992055169:y
+1655992060733:~run /vagrant/src/main/resources/workflowDefiniton.json
+1655994882381:/vagrant/src/main/resources/workflowDefiniton.json
+1655994884820:~run /vagrant/src/main/resources/workflowDefiniton.json

@@ -1,0 +1,23 @@
+{
+  "source": {
+    "sourceType": "ES",
+    "url": "localhost",
+    "port": 9200,
+    "indexPattern": "jaeger-span*",
+    "metadata":{}
+  },
+  "preProcessConfig" {
+    "columnsToDrop": ["flags", "parentSpanID", "spanID", "traceID"],
+}
+
+  "validation": [    "COLUMN_VALIDATION",  "FIELD_VALIDATION"  ],
+
+  "transformation": [    "SENTIMENT_ANALYSIS"  ],
+
+  "schemaValidation": [    "DATA_MODEL_VALIDATION"  ],
+
+  "sink": {
+    "type": "ES",
+    "meta":{ "index": "data_index","type": "twitter"    }
+  }
+}
