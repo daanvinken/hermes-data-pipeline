@@ -13,7 +13,8 @@
 **/.parquet
 /spark-warehouse
 /project
-
+parquet*
+/parquet*
 
 #
 # JARs aren't checked in, they are fetched by sbt
