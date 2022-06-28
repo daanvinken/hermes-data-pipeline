@@ -5,6 +5,9 @@ import org.apache.spark.sql
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 import org.hermes.pipeline.workflow.{MeasurementConfig, PreProcessConfig, Source, WorkFlow}
+import org.hermes.pipeline.statistics.TwoSampleKSTest
+import org.hermes.pipeline.statistics.models.KSTestResult
+import org.hermes.pipeline.util.Utils.generateRandomUniformDf
 
 import java.util.Properties;
 
@@ -19,12 +22,20 @@ object DataPipeline {
   def apply(workFlow: WorkFlow, applicationProperties: Properties)(implicit sc: SparkContext): String = {
     val emptyMap = Map.empty[String, String]
     val source = workFlow.source
-//    val sourceDF = applySource(source)
-//    val parquetLocations = applyPreProcessing(sourceDF, workFlow.preProcessConfig)
-    val parquetLocations =  List[String]("/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/splittedoperations_0/operationName=%2Forders%2Fcreate%2Fid%2F%7Bid}")
+    val KsTestTest = runKsTest()
+    val sourceDF = applySource(source)
+    val parquetLocations = applyPreProcessing(sourceDF, workFlow.preProcessConfig)
+//    val parquetLocations =  List[String]("/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/splittedoperations_0/operationName=%2Forders%2Fcreate%2Fid%2F%7Bid}")
     applyMeasurements(parquetLocations, workFlow.measurementConfig)
 
     new String("Done")
+  }
+
+  private def runKsTest()(implicit SC: SparkContext): KSTestResult = {
+    val df1 = generateRandomUniformDf(1000000, 1, SC)
+    val df2 = generateRandomUniformDf(1000000, 1, SC)
+    val ksTestResult = TwoSampleKSTest.run_KS(df1, "val0", df2, "val0")
+    ksTestResult
   }
 
   private def applySource(source: Source)(implicit SC: SparkContext): DataFrame = {
@@ -70,6 +81,9 @@ object DataPipeline {
       val parqDF = sparkSession.read.parquet(parquetFilePath)
       parqDF.printSchema()
     }
+    /* TODO apply KS-test as measurement
+    Perhaps we'd like this in a different class to have some kind of scheduler
+     */
 
 
     true

@@ -9,6 +9,10 @@ lazy val root = (project in file("."))
     libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.8",
     // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
     libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.8",
+
+      //temporary
+      libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.8",
+
     // https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch-spark-20
     libraryDependencies += "org.elasticsearch" %% "elasticsearch-spark-20" % "7.17.2",
 
