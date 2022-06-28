@@ -9,6 +9,12 @@
 # see also test/files/.gitignore
 #
 **/workflowDefinition.json
+**/.parquet.crc
+**/.parquet
+/spark-warehouse
+/project
+
+
 #
 # JARs aren't checked in, they are fetched by sbt
 #
