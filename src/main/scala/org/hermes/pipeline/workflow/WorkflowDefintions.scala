@@ -8,3 +8,5 @@ case class WorkFlow(
 case class Source(sourceType: String, url: String, port: Integer, indexPattern: String, metadata: Map[String, String])
 
 case class PreProcessConfig(columnsToDrop: List[String])
+
+case class MeasurementConfig(statisticalTestType: String)

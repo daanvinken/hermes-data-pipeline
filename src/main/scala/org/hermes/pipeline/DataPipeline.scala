@@ -1,10 +1,8 @@
 package org.hermes.pipeline
 
-import org.hermes.pipeline.workflow.WorkFlow
+import org.hermes.pipeline.workflow.{MeasurementConfig, PreProcessConfig, Source, WorkFlow}
 import org.hermes.pipeline.spark.SparkContextProvider
 import org.hermes.pipeline.models.TraceRecord
-import org.hermes.pipeline.workflow.Source
-import org.hermes.pipeline.workflow.PreProcessConfig
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
@@ -12,10 +10,10 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.Row
 import org.apache.log4j.Logger
 import org.apache.log4j.Level
+
 import java.util.Properties;
 
 trait DataPipeline{
-
   def run(): Unit
 }
 
@@ -27,11 +25,10 @@ object DataPipeline {
     val emptyMap = Map.empty[String, String]
     val source = workFlow.source
     val sourceDF = applySource(source)
-    val preProcessedRDD = applyPreProcessing(sourceDF, workFlow.preProcessConfig)
+    val preProcessedDF = applyPreProcessing(sourceDF, workFlow.preProcessConfig)
 
-    new String("success")
+    new String(preProcessedDF.summary().toString())
   }
-// /vagrant/src/main/resources/workflowDefiniton.json
 
   private def applySource(source: Source)(implicit sc: SparkContext): DataFrame = {
 
@@ -47,21 +44,29 @@ object DataPipeline {
           option("spark.serializer", "org.apache.spark.serializer.KryoSerializer").
           option("es.nodes.wan.only", "true")
 
-        var df = reader.load(source.indexPattern)
+        val df = reader.load(source.indexPattern)
 
         LOGGER.warn(String.format("Found Elasticsearch schema (%s):\n%s", source.indexPattern, df.schema.treeString))
-        df.describe().show()
-        return df
+        df
     }
 
   }
 
   private def applyPreProcessing(df: DataFrame, preProcessConfig: PreProcessConfig)(implicit sc: SparkContext): DataFrame = {
+    /* Drop columns */
     val toDrop = preProcessConfig.columnsToDrop
     val new_df = df.drop(toDrop : _*)
-    new_df.describe().show()
-    LOGGER.info("Test")
+
+    /* Split into parquet files per operation */
     new_df.printSchema()
-    return new_df
+    new_df.write.partitionBy("operationName").saveAsTable(tableName="splittedOperations")
+
+    new_df.describe().show()
+    new_df.printSchema()
+    new_df
+  }
+
+  private def applyMeasurements(df: DataFrame, measurementConfig: MeasurementConfig)(implicit sc: SparkContext): DataFrame = {
+    df
   }
 }

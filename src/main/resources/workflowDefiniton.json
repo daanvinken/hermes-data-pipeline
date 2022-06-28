@@ -1,0 +1,20 @@
+{
+  "source": {
+    "sourceType": "ES",
+    "url": "app1.daan-vinken.sandbox01.adyen.com",
+    "port": 9200,
+    "indexPattern": "jaeger-span*",
+    "metadata":{}
+  },
+  "preProcessConfig" : {
+    "columnsToDrop": ["flags", "parentSpanID", "spanID", "traceID", "logs", "process", "references", "startTime", "startTimeMillis", "tag", "tags"]
+  },
+  "measurementConfig" : {
+    "statisticalTestType": "KS"
+  },
+
+"sink": {
+"type": "ES",
+"meta":{ "index": "data_index","type": "twitter"    }
+}
+}
