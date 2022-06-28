@@ -1,4 +1,4 @@
-package org.hermes.pipeline.spark
+package org.hermes.pipeline.sparkcontext
 
 import org.apache.spark.{SparkConf, SparkContext}
 

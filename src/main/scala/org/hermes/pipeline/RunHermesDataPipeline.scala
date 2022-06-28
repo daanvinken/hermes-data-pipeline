@@ -1,10 +1,9 @@
 package org.hermes.pipeline
 
-import org.hermes.pipeline.DataPipeline;
 import org.hermes.pipeline.util.JSONHelper;
 import org.hermes.pipeline.workflow.WorkFlow;
 import org.hermes.pipeline.workflow.Source;
-import org.hermes.pipeline.spark.SparkContextProvider;
+import org.hermes.pipeline.sparkcontext.SparkContextProvider;
 import java.util.Properties;
 import java.nio.file.Files
 import java.nio.file.Path
