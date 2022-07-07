@@ -1,3 +1,3 @@
 package org.hermes.pipeline.statistics.models
 
-case class KSTestResult(pValue: Double, distance: Double)
+case class KSTestResult(distance: Double, pValue: Double)

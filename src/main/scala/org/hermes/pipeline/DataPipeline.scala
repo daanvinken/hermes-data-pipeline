@@ -3,7 +3,9 @@ package org.hermes.pipeline
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.hermes.pipeline.statistics.TwoSampleKSTest
 import org.hermes.pipeline.statistics.models.KSTestResult
+import org.hermes.pipeline.util.Utils.getElasticReader
 import org.hermes.pipeline.workflow.{MeasurementConfig, PreProcessConfig, Source, WorkFlow}
 
 import java.util.Properties
@@ -16,12 +18,10 @@ trait DataPipeline{
 object DataPipeline {
   val LOGGER = Logger.getLogger("DataPipeline")
 
-  def apply(workFlow: WorkFlow, applicationProperties: Properties)(implicit sc: SparkContext): String = {
+  def apply(workFlow: WorkFlow, applicationProperties: Properties)(implicit sc: SparkContext, sq: SparkSession): Unit = {
     val sourceDF = applySource(workFlow.source)
 
     var parquetLocations = List[String]()
-
-    println(workFlow.preProcessConfig.operations.length)
 
     if (workFlow.preProcessConfig.operations.nonEmpty) {
       parquetLocations = applyPreProcessing(sourceDF, workFlow.preProcessConfig)
@@ -32,45 +32,33 @@ object DataPipeline {
 
     val result = applyStatisticalTest(parquetLocations, workFlow.measurementConfig)
 
-    println("KS Test result: " + result)
-    new String("Done")
+    LOGGER.info("KS Test result:\n" + "\t\t\t\t\t| Distance D = " + result.distance + "\n\t\t\t\t\t" + "| p-value = " + result.pValue)
+
   }
 
-  private def applySource(source: Source)(implicit SC: SparkContext): DataFrame = {
-    val sqlContext = SparkSession.builder().appName("hermes-data-pipeline").master("local").getOrCreate()
+  private def applySource(source: Source)(implicit SC: SparkContext, SQ: SparkSession): DataFrame = {
 
     source.sourceType match {
       case "ELASTICSEARCH" => {
-        LOGGER.warn("Connecting to Elasticsearch as data source.")
-        val sqlContext = SparkSession.builder().appName("hermes-data-pipeline").master("local").getOrCreate()
-        val reader = sqlContext.read.
-          format("org.elasticsearch.spark.sql").
-          option("es.nodes", source.metadata("url")).
-          option("es.port", source.metadata("port")).
-          option("es.index.auto.create", "true").
-          option("spark.serializer", "org.apache.spark.serializer.KryoSerializer").
-          option("es.nodes.wan.only", "true")
-
+        LOGGER.info("Connecting to Elasticsearch as data source.")
+        val reader = getElasticReader(source)
         val df = reader.load(source.metadata("indexPattern"))
-
-        LOGGER.warn(String.format("Found Elasticsearch schema (%s):\n%s", source.metadata("indexPattern"), df.schema.treeString))
+        LOGGER.info(String.format("Found Elasticsearch schema (%s):\n%s", source.metadata("indexPattern"), df.schema.treeString))
         df
       }
       case "PARQUET" => {
-        LOGGER.warn("Using Parquet files as data source.")
+        LOGGER.info("Using Parquet files as data source.")
+        SQ.emptyDataFrame
       }
-      sqlContext.emptyDataFrame
     }
 
   }
 
   private def applyValidation(): Unit = {
-    null
   }
 
-  private def applyPreProcessing(df: DataFrame, preProcessConfig: PreProcessConfig)(implicit SC: SparkContext): List[String] = {
-    /* TODO remove this and create an empty dataframe, but first need sqlcontext */
-    var new_df = df
+  private def applyPreProcessing(df: DataFrame, preProcessConfig: PreProcessConfig)(implicit SC: SparkContext, SQ: SparkSession): List[String] = {
+    var new_df = SQ.emptyDataFrame
 
     preProcessConfig.operations.foreach {
       case "DROP_COLUMNS" => {
@@ -79,8 +67,6 @@ object DataPipeline {
       }
       case default => throw new IllegalArgumentException("'$default' is not a known operation for preprocessing.")
     }
-
-
 
     /* Split into parquet files per operation */
     new_df.printSchema()
@@ -92,13 +78,12 @@ object DataPipeline {
     parquetLocations
   }
 
-  private def applyStatisticalTest(parquetFilePaths: List[String], measurementConfig: MeasurementConfig)(implicit SC: SparkContext): KSTestResult = {
-    val sparkSession = SparkSession.builder().appName("hermes-data-pipeline").master("local").getOrCreate()
-    println(parquetFilePaths)
-    val df1 = sparkSession.read.parquet(parquetFilePaths(0))
-    val df2 = sparkSession.read.parquet(parquetFilePaths(1))
-
+  private def applyStatisticalTest(parquetFilePaths: List[String], measurementConfig: MeasurementConfig)(implicit SC: SparkContext, SQ: SparkSession): KSTestResult = {
+    val df1 = SQ.read.parquet(parquetFilePaths(0))
+    val df2 = SQ.read.parquet(parquetFilePaths(1))
+    LOGGER.info("Starting KS-test")
     val ksTestResult = TwoSampleKSTest.run_KS(df1, "duration", df2, "duration")
+    LOGGER.info("Done")
     ksTestResult
   }
 }

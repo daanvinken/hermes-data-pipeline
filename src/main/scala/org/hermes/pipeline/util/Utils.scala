@@ -2,8 +2,9 @@ package org.hermes.pipeline.util
 
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.random.RandomRDDs
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, DataFrameReader, Row, SparkSession}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
+import org.hermes.pipeline.workflow.Source
 
 object Utils {
   def generateRandomUniformDf(numRows: Integer, numCols: Integer, SC: SparkContext): DataFrame = {
@@ -33,5 +34,15 @@ object Utils {
     val df = sqlContext.createDataFrame(rowRDD, schema)
     df.describe().show()
     df
+  }
+
+  def getElasticReader(source: Source)(implicit SQ: SparkSession): DataFrameReader = {
+    SQ.read.
+        format("org.elasticsearch.spark.sql").
+        option("es.nodes", source.metadata("url")).
+        option("es.port", source.metadata("port")).
+        option("es.index.auto.create", "true").
+        option("spark.serializer", "org.apache.spark.serializer.KryoSerializer").
+        option("es.nodes.wan.only", "true")
   }
 }
