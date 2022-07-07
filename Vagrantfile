@@ -14,6 +14,6 @@ config.vm.box = "mattburnett/fedora-35-m1-arm64"
   config.vm.network "forwarded_port", guest: 8080, host: 8080 # Spark misc
   config.vm.network "forwarded_port", guest: 7077, host: 7077 # Spark misc
 
-  config.vm.provision "shell", path: "provision.sh"
+  config.vm.provision "shell", path: "scripts/provision.sh"
 end
 

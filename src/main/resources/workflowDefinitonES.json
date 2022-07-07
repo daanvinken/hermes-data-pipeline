@@ -1,0 +1,17 @@
+{
+  "source": {
+    "sourceType": "ES",
+    "metadata":{
+      "url": "app1.daan-vinken.sandbox01.adyen.com",
+      "port": 9200,
+      "indexPattern": "jaeger-span*"
+    }
+  },
+  "preProcessConfig" : {
+    "operations": ["DROP_COLUMNS"],
+    "metadata": {
+      "columnsToDrop": ["flags", "parentSpanID", "spanID", "traceID", "logs", "process", "references", "startTime", "startTimeMillis", "tag", "tags"]
+    },
+    "outputLocation": "/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/outputDF"
+  }
+}

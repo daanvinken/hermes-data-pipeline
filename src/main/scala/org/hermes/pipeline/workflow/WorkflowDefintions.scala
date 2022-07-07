@@ -6,8 +6,13 @@ case class WorkFlow(
                      measurementConfig: MeasurementConfig
                    )
 
-case class Source(sourceType: String, url: String, port: Integer, indexPattern: String, metadata: Map[String, String])
+case class Source(sourceType: String,
+                  metadata: Map[String, String])
 
-case class PreProcessConfig(columnsToDrop: List[String])
+case class PreProcessConfig(
+                            operations: List[String],
+                            outputName: String,
+                            metadata: Map[String, Object]
+                           )
 
 case class MeasurementConfig(statisticalTestType: String)

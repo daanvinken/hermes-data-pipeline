@@ -1,14 +1,17 @@
 {
   "source": {
-    "sourceType": "ES",
-    "url": "app1.daan-vinken.sandbox01.adyen.com",
-    "port": 9200,
-    "indexPattern": "jaeger-span*",
-    "metadata":{}
+    "sourceType": "PARQUET",
+    "metadata":{
+      "location_1": "/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/splittedoperations_min500new/operationName=%2Fpayment%2Ftransfer%2Fid%2F%7Bid}%2Famount%2F%7Bamount}",
+      "location_2": "/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/splittedoperations_min500newnew/operationName=%2Fpayment%2Ftransfer%2Fid%2F%7Bid}%2Famount%2F%7Bamount}"
+    }
   },
   "preProcessConfig" : {
-    "columnsToDrop": ["flags", "parentSpanID", "spanID", "traceID", "logs", "process", "references", "startTime", "startTimeMillis", "tag", "tags"]
+    "operations": [],
+    "outputName": "parquet_out_123",
+    "metadata": {}
   },
+
   "measurementConfig" : {
     "statisticalTestType": "KS"
   },

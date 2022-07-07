@@ -43,7 +43,7 @@ object TwoSampleKSTest{
     val Z = KsStatistic * scala.math.sqrt(m * n / (m + n))
 
     if (Z < 0) {
-      throw new RuntimeException("Z value (coming from maximum distance (KsStatistic)) cannot by < 0.")
+      throw new IllegalArgumentException("Z value (coming from maximum distance CDFs) cannot by < 0.")
     }
 
     if (0 <= Z && Z < 0.27) {
@@ -74,10 +74,10 @@ object TwoSampleKSTest{
     val KsStatisticResult = cdfs
       .withColumn(FILLED_CDF_1,
         functions.last(col(CDF_1), ignoreNulls = true)
-          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow)))
+          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow).orderBy(CDF_1 + "." + variable_1)))
       .withColumn(FILLED_CDF_2,
         functions.last(col(CDF_2), ignoreNulls = true)
-          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow)))
+          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow).orderBy(CDF_1 + "." + variable_1)))
       .select(functions.max(col(FILLED_CDF_1) - col(FILLED_CDF_2)))
       .collect()(0)(0)
 
