@@ -32,7 +32,7 @@ object TwoSampleKSTest{
 
   def getCDF(df: DataFrame, variable: String, columnName: String): DataFrame = {
     val cdf = df.select(variable).na.drop()
-                .withColumn(columnName, functions.cume_dist().over(Window.orderBy(variable)))
+                .withColumn(columnName, functions.cume_dist().over(Window.orderBy(variable))).distinct()
     cdf
   }
 
@@ -74,11 +74,11 @@ object TwoSampleKSTest{
     val KsStatisticResult = cdfs
       .withColumn(FILLED_CDF_1,
         functions.last(col(CDF_1), ignoreNulls = true)
-          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow).orderBy(CDF_1 + "." + variable_1)))
+          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow)))
       .withColumn(FILLED_CDF_2,
         functions.last(col(CDF_2), ignoreNulls = true)
-          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow).orderBy(CDF_1 + "." + variable_1)))
-      .select(functions.max(col(FILLED_CDF_1) - col(FILLED_CDF_2)))
+          .over(Window.rowsBetween(Window.unboundedPreceding, Window.currentRow)))
+      .select(functions.max(functions.abs(col(FILLED_CDF_1) - col(FILLED_CDF_2))))
       .collect()(0)(0)
 
     val KsStatistic : Double = AnyToDouble(KsStatisticResult)

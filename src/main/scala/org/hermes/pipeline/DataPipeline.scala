@@ -47,7 +47,7 @@ object DataPipeline {
         df
       }
       case "PARQUET" => {
-        LOGGER.info("Using Parquet files as data source.")
+        LOGGER.info("Using Parquet files as data source. These will be read during preprocessing.")
         SQ.emptyDataFrame
       }
     }
@@ -81,6 +81,9 @@ object DataPipeline {
   private def applyStatisticalTest(parquetFilePaths: List[String], measurementConfig: MeasurementConfig)(implicit SC: SparkContext, SQ: SparkSession): KSTestResult = {
     val df1 = SQ.read.parquet(parquetFilePaths(0))
     val df2 = SQ.read.parquet(parquetFilePaths(1))
+    df1.summary().show()
+    df2.summary().show()
+
     LOGGER.info("Starting KS-test")
     val ksTestResult = TwoSampleKSTest.run_KS(df1, "duration", df2, "duration")
     LOGGER.info("Done")

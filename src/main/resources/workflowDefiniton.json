@@ -2,7 +2,7 @@
   "source": {
     "sourceType": "PARQUET",
     "metadata":{
-      "location_1": "/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/splittedoperations_min500new/operationName=%2Fpayment%2Ftransfer%2Fid%2F%7Bid}%2Famount%2F%7Bamount}",
+      "location_1": "/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/splittedoperations_min500/operationName=%2Fpayment%2Ftransfer%2Fid%2F%7Bid}%2Famount%2F%7Bamount}",
       "location_2": "/Users/daanvi/workspace/hermes-data-pipeline/spark-warehouse/splittedoperations_min500newnew/operationName=%2Fpayment%2Ftransfer%2Fid%2F%7Bid}%2Famount%2F%7Bamount}"
     }
   },
@@ -18,6 +18,6 @@
 
 "sink": {
 "type": "ES",
-"meta":{ "index": "data_index","type": "twitter"    }
+"meta":{ "index": "data_index","type": "twitter"}
 }
 }
